@@ -1,0 +1,10 @@
+Metadata-Version: 2.2
+Name: e-commerce-bot
+Version: 0.0.1
+Author: shahbaz
+Author-email: shahbazzulfiqar894@gmail.com
+Requires-Dist: langchain-astradb
+Requires-Dist: langchain
+Dynamic: author
+Dynamic: author-email
+Dynamic: requires-dist

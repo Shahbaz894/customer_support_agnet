@@ -1,0 +1,4 @@
+langchain_astradb
+pandas
+langchain_google_genai
+ -e .
