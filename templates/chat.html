@@ -4,90 +4,136 @@
     <meta charset="UTF-8">
     <title>Flipkart Product Assistant</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
 
-    <!-- Custom Styles -->
+    <!-- Custom External CSS -->
+    <link rel="stylesheet" href="/static/style.css">
     <style>
         body {
-            background: #f5f7fa;
+            background: #f4f7fc;
+            font-family: 'Arial', sans-serif;
         }
 
-        .chat {
-            height: 90vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        .container {
+            margin-top: 50px;
         }
 
         .card {
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: white;
         }
 
         .msg_head {
-            background-color: #2874f0;
-            color: white;
+            background: #0066ff;
             padding: 15px;
+            border-radius: 15px 15px 0 0;
+            color: white;
         }
 
-        .msg_head .user_info span {
-            font-weight: bold;
-            font-size: 1.2rem;
+        .user_info span {
+            font-size: 18px;
+            font-weight: 600;
         }
 
         .msg_card_body {
-            height: 60vh;
+            padding: 20px;
             overflow-y: auto;
-            padding: 15px;
-            background: #fff;
-        }
-
-        .msg_cotainer, .msg_cotainer_send {
-            background-color: #f1f0f0;
-            border-radius: 20px;
-            padding: 10px 15px;
-            max-width: 75%;
-            position: relative;
-        }
-
-        .msg_cotainer {
-            background-color: #e1f5fe;
-            align-self: flex-start;
+            max-height: 400px;
+            background: #f9f9f9;
+            border-radius: 0 0 15px 15px;
         }
 
         .msg_cotainer_send {
-            background-color: #d1e7dd;
-            align-self: flex-end;
+            background: #0066ff;
+            color: white;
+            border-radius: 15px;
+            padding: 10px 15px;
+            max-width: 80%;
         }
 
-        .msg_time, .msg_time_send {
-            font-size: 0.75rem;
-            color: gray;
-            position: absolute;
-            bottom: -20px;
-            right: 10px;
+        .msg_cotainer {
+            background: #e0e0e0;
+            color: black;
+            border-radius: 15px;
+            padding: 10px 15px;
+            max-width: 80%;
         }
 
-        .img_cont_msg img {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
+        .msg_time_send, .msg_time {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .img_cont_msg {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .user_img_msg {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        #messageArea {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            background-color: #ffffff;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #text {
+            width: 80%;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            font-size: 14px;
         }
 
         .send_btn {
-            background-color: #2874f0;
+            background-color: #0066ff;
             color: white;
             border: none;
+            padding: 10px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
         }
 
-        .type_msg {
-            border-radius: 0 0 0 20px;
+        .send_btn:hover {
+            background-color: #0055cc;
+        }
+
+        .btn-secondary {
+            background-color: #25d366;
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+        }
+
+        .btn-secondary:hover {
+            background-color: #1db44b;
+        }
+
+        /* Add some animations for the messages */
+        .msg_cotainer, .msg_cotainer_send {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
@@ -114,7 +160,12 @@
                     <form id="messageArea" class="d-flex">
                         <input type="text" id="text" name="msg" placeholder="Type your message..." autocomplete="off"
                                class="form-control me-2 type_msg" required>
-                        <button type="submit" id="send" class="btn send_btn"><i class="fas fa-paper-plane"></i></button>
+                        <button type="submit" id="send" class="btn send_btn me-2">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        <button type="button" id="voiceBtn" class="btn btn-secondary">
+                            <i class="fas fa-microphone"></i>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -129,13 +180,31 @@
     $(document).ready(function () {
         $("#messageArea").on("submit", function (event) {
             event.preventDefault();
+            sendMessage($("#text").val());
+        });
+
+        $("#voiceBtn").on("click", function () {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = "en-US";
+            recognition.start();
+
+            recognition.onresult = function (event) {
+                const transcript = event.results[0][0].transcript;
+                $("#text").val(transcript);
+                sendMessage(transcript);
+            };
+
+            recognition.onerror = function () {
+                alert("Voice recognition failed. Please try again.");
+            };
+        });
+
+        function sendMessage(rawText) {
+            if (!rawText.trim()) return;
             const date = new Date();
             const hour = date.getHours();
             const minute = String(date.getMinutes()).padStart(2, '0');
             const str_time = `${hour}:${minute}`;
-            const rawText = $("#text").val();
-
-            if (!rawText.trim()) return;
 
             const userHtml = `
                 <div class="d-flex justify-content-end mb-3">
@@ -147,7 +216,6 @@
                         <img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg">
                     </div>
                 </div>`;
-
             $("#text").val("");
             $("#messageFormeight").append(userHtml);
 
@@ -169,8 +237,20 @@
                     </div>`;
                 $("#messageFormeight").append(botHtml);
                 $("#messageFormeight").scrollTop($("#messageFormeight")[0].scrollHeight);
+                
+                // Call the function to speak the response
+                speakResponse(data);
             });
-        });
+        }
+
+        function speakResponse(text) {
+            // Create a new SpeechSynthesisUtterance object
+            const utterance = new SpeechSynthesisUtterance(text);
+            // Set the language and voice (optional customization)
+            utterance.lang = 'en-US';
+            // Start speaking
+            window.speechSynthesis.speak(utterance);
+        }
     });
 </script>
 

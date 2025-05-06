@@ -1,3 +1,5 @@
 config
 data_ingestion
+prompt_library
 utils
+voice

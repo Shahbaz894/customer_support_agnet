@@ -9,5 +9,9 @@ e_commerce_bot.egg-info/SOURCES.txt
 e_commerce_bot.egg-info/dependency_links.txt
 e_commerce_bot.egg-info/requires.txt
 e_commerce_bot.egg-info/top_level.txt
+prompt_library/__init__.py
+prompt_library/prompt.py
 utils/__init__.py
 utils/model_loader.py
+voice/__init__.py
+voice/voice_model.py

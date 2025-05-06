@@ -1,4 +1,11 @@
 langchain_astradb
 pandas
 langchain_google_genai
+SpeechRecognition
+pipwin
+pyaudio
+gTTS
+google-generativeai
+python-dotenv
+
  -e .
