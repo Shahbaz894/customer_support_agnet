@@ -37,4 +37,4 @@ def text_to_speech(text, filename="static/reply.mp3"):
     tts.save(filename)
     playsound.playsound(filename)  # Optional: To immediately play the speech
     return filename  # Return the file path for response
-
+#nice
